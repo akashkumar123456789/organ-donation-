@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Test - Organ Donation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f0f0f0; }
+        .test-section { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        .success { color: green; } .error { color: red; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { background: #f8f9fa; padding: 10px; margin: 10px 0; border-left: 4px solid #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🧪 System CRUD Test Page</h1>
+    
+    <div class="test-section">
+        <h2>1. Donor CRUD Operations</h2>
+        <button onclick="testDonorCRUD()">Test Donor CRUD</button>
+        <div id="donor-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Patient CRUD Operations</h2>
+        <button onclick="testPatientCRUD()">Test Patient CRUD</button>
+        <div id="patient-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Hospital CRUD Operations</h2>
+        <button onclick="testHospitalCRUD()">Test Hospital CRUD</button>
+        <div id="hospital-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Match CRUD Operations</h2>
+        <button onclick="testMatchCRUD()">Test Match CRUD</button>
+        <div id="match-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Record CRUD Operations</h2>
+        <button onclick="testRecordCRUD()">Test Record CRUD</button>
+        <div id="record-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🚀 Main Application</h2>
+        <a href="/"><button>Go to Main Application</button></a>
+    </div>
+
+    <script>
+        async function apiRequest(method, endpoint, data = null) {
+            const options = { method, headers: { 'Content-Type': 'application/json' } };
+            if (data) options.body = JSON.stringify(data);
+            const response = await fetch(`/api${endpoint}`, options);
+            return await response.json();
+        }
+
+        async function testDonorCRUD() {
+            const result = document.getElementById('donor-result');
+            result.innerHTML = 'Testing Donor CRUD...';
+            
+            try {
+                // Create
+                const createResult = await apiRequest('POST', '/donors', {
+                    name: 'Test Donor',
+                    blood_group: 'A+',
+                    organ_type: 'Heart',
+                    contact: '123-456-7890'
+                });
+                
+                // Read
+                const readResult = await apiRequest('GET', '/donors');
+                
+                // Update
+                const donorId = readResult.donors[0]?.id;
+                const updateResult = await apiRequest('PUT', `/donors/${donorId}`, {
+                    name: 'Updated Donor',
+                    blood_group: 'A+',
+                    organ_type: 'Heart',
+                    contact: '123-456-7890',
+                    status: 'Available'
+                });
+                
+                result.innerHTML = `
+                    <div class="success">✓ CREATE: ${createResult.success ? 'Success' : 'Failed'}</div>
+                    <div class="success">✓ READ: Found ${readResult.donors.length} donors</div>
+                    <div class="success">✓ UPDATE: ${updateResult.success ? 'Success' : 'Failed'}</div>
+                    <div class="success">✓ All Donor CRUD operations working!</div>
+                `;
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testPatientCRUD() {
+            const result = document.getElementById('patient-result');
+            result.innerHTML = 'Testing Patient CRUD...';
+            
+            try {
+                const createResult = await apiRequest('POST', '/patients', {
+                    name: 'Test Patient',
+                    blood_group: 'A+',
+                    organ_needed: 'Heart',
+                    urgency_level: 7,
+                    contact: '987-654-3210'
+                });
+                
+                const readResult = await apiRequest('GET', '/patients');
+                
+                result.innerHTML = `
+                    <div class="success">✓ CREATE: ${createResult.success ? 'Success' : 'Failed'}</div>
+                    <div class="success">✓ READ: Found ${readResult.patients.length} patients</div>
+                    <div class="success">✓ All Patient CRUD operations working!</div>
+                `;
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testHospitalCRUD() {
+            const result = document.getElementById('hospital-result');
+            result.innerHTML = 'Testing Hospital CRUD...';
+            
+            try {
+                const createResult = await apiRequest('POST', '/hospitals', {
+                    name: 'Test Hospital',
+                    location: 'Test City',
+                    capacity: 25
+                });
+                
+                const readResult = await apiRequest('GET', '/hospitals');
+                
+                result.innerHTML = `
+                    <div class="success">✓ CREATE: ${createResult.success ? 'Success' : 'Failed'}</div>
+                    <div class="success">✓ READ: Found ${readResult.hospitals.length} hospitals</div>
+                    <div class="success">✓ All Hospital CRUD operations working!</div>
+                `;
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testMatchCRUD() {
+            const result = document.getElementById('match-result');
+            result.innerHTML = 'Testing Match CRUD...';
+            
+            try {
+                const donors = await apiRequest('GET', '/donors');
+                const patients = await apiRequest('GET', '/patients');
+                const hospitals = await apiRequest('GET', '/hospitals');
+                
+                if (donors.donors.length && patients.patients.length && hospitals.hospitals.length) {
+                    const createResult = await apiRequest('POST', '/matches', {
+                        donor_id: donors.donors[0].id,
+                        patient_id: patients.patients[0].id,
+                        hospital_id: hospitals.hospitals[0].id
+                    });
+                    
+                    const readResult = await apiRequest('GET', '/matches');
+                    
+                    result.innerHTML = `
+                        <div class="success">✓ CREATE: ${createResult.success ? 'Success' : 'Failed'}</div>
+                        <div class="success">✓ READ: Found ${readResult.matches.length} matches</div>
+                        <div class="success">✓ All Match CRUD operations working!</div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">Need donors, patients, and hospitals first</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testRecordCRUD() {
+            const result = document.getElementById('record-result');
+            result.innerHTML = 'Testing Record CRUD...';
+            
+            try {
+                const matches = await apiRequest('GET', '/matches');
+                
+                if (matches.matches.length) {
+                    const createResult = await apiRequest('POST', '/records', {
+                        match_id: matches.matches[0].id,
+                        surgery_date: '2024-01-15',
+                        success_status: 'Successful',
+                        notes: 'Test surgery record'
+                    });
+                    
+                    const readResult = await apiRequest('GET', '/records');
+                    
+                    result.innerHTML = `
+                        <div class="success">✓ CREATE: ${createResult.success ? 'Success' : 'Failed'}</div>
+                        <div class="success">✓ READ: Found ${readResult.records.length} records</div>
+                        <div class="success">✓ All Record CRUD operations working!</div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">Need matches first</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

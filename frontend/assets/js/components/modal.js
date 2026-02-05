@@ -1,0 +1,1 @@
+// Modal component - empty file since modal functionality is in app.js

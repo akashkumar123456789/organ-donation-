@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeCare - Organ Donation Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>Organ Donation System</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#" class="home-btn" onclick="app.showHome()">🏠 Home</a></li>
+            <li><a href="#" data-page="dashboard">📊 Dashboard</a></li>
+            <li><a href="#" data-page="donors">🩸 Donors</a></li>
+            <li><a href="#" data-page="patients">🏥 Patients</a></li>
+            <li><a href="#" data-page="hospitals">🏢 Hospitals</a></li>
+            <li><a href="#" data-page="matches">🔄 Matches</a></li>
+            <li><a href="#" data-page="records">📋 Records</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div id="app-content">
+            <div class="welcome-section">
+                <h1>🏥 Welcome to Organ Donation System</h1>
+                <div class="hero-icons">
+                    <span class="hero-icon">🫀</span>
+                    <span class="hero-icon">🩸</span>
+                    <span class="hero-icon">🏥</span>
+                    <span class="hero-icon">💝</span>
+                </div>
+                <p style="font-size: 1.2rem; margin-top: 1rem; color: #740A03;">Advanced Organ Donation Management Platform</p>
+                <p style="margin-top: 1rem; color: #C3110C;">Connecting donors with patients through innovative technology and compassionate care management.</p>
+                <div style="margin-top: 3rem;">
+                    <button class="btn btn-primary" onclick="app.loadPage('dashboard')" style="margin: 0 1rem;">🚀 Get Started</button>
+                    <button class="btn btn-secondary" onclick="app.loadPage('donors')" style="margin: 0 1rem;">👥 View Donors</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for forms -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="/assets/js/services/api.js"></script>
+    <script src="/assets/js/controllers/dashboardController.js"></script>
+    <script src="/assets/js/controllers/donorController.js"></script>
+    <script src="/assets/js/controllers/patientController.js"></script>
+    <script src="/assets/js/controllers/hospitalController.js"></script>
+    <script src="/assets/js/controllers/matchController.js"></script>
+    <script src="/assets/js/controllers/recordController.js"></script>
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>
