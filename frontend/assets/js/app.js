@@ -8,12 +8,12 @@ class App {
     init() {
         // Initialize controllers after API is loaded
         this.controllers = {
-            dashboard: new DashboardController(),
-            donors: new DonorController(),
-            patients: new PatientController(),
-            hospitals: new HospitalController(),
-            matches: new MatchController(),
-            records: new RecordController()
+            dashboard: window.dashboardController || new DashboardController(),
+            donors: window.donorController || new DonorController(),
+            patients: window.patientController || new PatientController(),
+            hospitals: window.hospitalController || new HospitalController(),
+            matches: window.matchController || new MatchController(),
+            records: window.recordController || new RecordController()
         };
         this.setupNavigation();
         this.setupModal();
