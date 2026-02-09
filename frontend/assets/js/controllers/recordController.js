@@ -15,25 +15,20 @@ class RecordController {
                 <table>
                     <thead>
                         <tr>
-                            <th>Donor</th>
-                            <th>Patient</th>
+                            <th>Record ID</th>
                             <th>Surgery Date</th>
                             <th>Success Status</th>
-                            <th>Notes</th>
-                            <th>Follow-up</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${this.records.map(record => `
                             <tr>
-                                <td>${record.donor_name || 'Unknown'}</td>
-                                <td>${record.patient_name || 'Unknown'}</td>
+                                <td>#${record.id}</td>
                                 <td>${record.surgery_date || 'Not Set'}</td>
                                 <td><span class="status-badge status-${record.success_status ? record.success_status.toLowerCase() : 'pending'}">${record.success_status || 'Pending'}</span></td>
-                                <td>${record.notes ? record.notes.substring(0, 50) + '...' : 'No notes'}</td>
-                                <td>${record.follow_up_notes ? 'Yes' : 'No'}</td>
                                 <td>
+                                    <button class="btn btn-primary" onclick="recordController.showProfile(${record.id})" title="View Full Profile">👁️ View</button>
                                     <button class="btn btn-secondary" onclick="recordController.showEditForm(${record.id})">Edit</button>
                                     <button class="btn btn-danger" onclick="recordController.deleteRecord(${record.id})">Delete</button>
                                 </td>
@@ -167,6 +162,92 @@ class RecordController {
                 console.error('Failed to delete record:', error);
             }
         }
+    }
+
+    showProfile(id) {
+        const record = this.records.find(r => r.id === id);
+        const profile = `
+            <h2 style="text-align: center; color: #740A03; margin-bottom: 2rem;">📋 Complete Medical Record Profile</h2>
+            
+            <div style="display: grid; gap: 1.5rem;">
+                <!-- Record Information -->
+                <div style="background: linear-gradient(135deg, #6f42c1, #5a32a3); padding: 1.5rem; border-radius: 15px; color: white;">
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        📝 Record Information
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div><strong>Record ID:</strong> #${record.id}</div>
+                        <div><strong>Match ID:</strong> #${record.match_id}</div>
+                        <div><strong>Surgery Date:</strong> ${record.surgery_date || 'Not Set'}</div>
+                        <div><strong>Success Status:</strong> <span style="background: rgba(255,255,255,0.3); padding: 0.3rem 0.8rem; border-radius: 10px;">${record.success_status || 'Pending'}</span></div>
+                        <div style="grid-column: 1 / -1;"><strong>Match Stage:</strong> ${record.match_stage || 'N/A'}</div>
+                        <div style="grid-column: 1 / -1;"><strong>Match Created:</strong> ${record.match_created ? new Date(record.match_created).toLocaleString() : 'N/A'}</div>
+                    </div>
+                </div>
+
+                <!-- Donor Information -->
+                <div style="background: linear-gradient(135deg, #28a745, #20c997); padding: 1.5rem; border-radius: 15px; color: white;">
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        🩸 Donor Profile
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div><strong>ID:</strong> #${record.donor.id}</div>
+                        <div><strong>Name:</strong> ${record.donor.name}</div>
+                        <div><strong>Blood Group:</strong> ${record.donor.blood_group}</div>
+                        <div><strong>Organ Type:</strong> ${record.donor.organ_type}</div>
+                        <div><strong>Contact:</strong> ${record.donor.contact}</div>
+                        <div><strong>Status:</strong> <span style="background: rgba(255,255,255,0.3); padding: 0.3rem 0.8rem; border-radius: 10px;">${record.donor.status}</span></div>
+                    </div>
+                </div>
+
+                <!-- Patient Information -->
+                <div style="background: linear-gradient(135deg, #dc3545, #c82333); padding: 1.5rem; border-radius: 15px; color: white;">
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        🫀 Patient Profile
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div><strong>ID:</strong> #${record.patient.id}</div>
+                        <div><strong>Name:</strong> ${record.patient.name}</div>
+                        <div><strong>Blood Group:</strong> ${record.patient.blood_group}</div>
+                        <div><strong>Organ Needed:</strong> ${record.patient.organ_needed}</div>
+                        <div><strong>Urgency Level:</strong> <span style="background: rgba(255,255,255,0.3); padding: 0.3rem 0.8rem; border-radius: 10px;">${record.patient.urgency_level}/10</span></div>
+                        <div><strong>Contact:</strong> ${record.patient.contact}</div>
+                        <div style="grid-column: 1 / -1;"><strong>Status:</strong> <span style="background: rgba(255,255,255,0.3); padding: 0.3rem 0.8rem; border-radius: 10px;">${record.patient.status}</span></div>
+                    </div>
+                </div>
+
+                <!-- Hospital Information -->
+                <div style="background: linear-gradient(135deg, #007bff, #0056b3); padding: 1.5rem; border-radius: 15px; color: white;">
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        🏥 Hospital Details
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div><strong>ID:</strong> #${record.hospital.id}</div>
+                        <div><strong>Name:</strong> ${record.hospital.name}</div>
+                        <div><strong>Location:</strong> ${record.hospital.location}</div>
+                        <div><strong>Capacity:</strong> ${record.hospital.capacity} beds</div>
+                        <div style="grid-column: 1 / -1;"><strong>Operating Status:</strong> <span style="background: rgba(255,255,255,0.3); padding: 0.3rem 0.8rem; border-radius: 10px;">${record.hospital.operating_status}</span></div>
+                    </div>
+                </div>
+
+                <!-- Surgery Notes -->
+                <div style="background: rgba(243, 244, 244, 0.95); padding: 1.5rem; border-radius: 15px; color: #280905;">
+                    <h3 style="margin-bottom: 1rem; color: #740A03;">📝 Surgery Notes</h3>
+                    <p style="background: white; padding: 1rem; border-radius: 10px; min-height: 60px;">${record.notes || 'No notes available'}</p>
+                </div>
+
+                <!-- Follow-up Notes -->
+                <div style="background: rgba(243, 244, 244, 0.95); padding: 1.5rem; border-radius: 15px; color: #280905;">
+                    <h3 style="margin-bottom: 1rem; color: #740A03;">📊 Follow-up Notes</h3>
+                    <p style="background: white; padding: 1rem; border-radius: 10px; min-height: 60px;">${record.follow_up_notes || 'No follow-up notes yet'}</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="app.hideModal()" style="padding: 1rem 3rem;">Close</button>
+            </div>
+        `;
+        app.showModal(profile);
     }
 }
 

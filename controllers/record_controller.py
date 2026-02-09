@@ -6,11 +6,20 @@ class RecordController:
 
     def get_all(self):
         query = """
-        SELECT r.*, m.donor_id, m.patient_id, d.name as donor_name, p.name as patient_name
+        SELECT 
+            r.id, r.match_id, r.surgery_date, r.success_status, r.notes, r.follow_up_notes,
+            m.stage, m.created_at,
+            d.id as donor_id, d.name as donor_name, d.blood_group as donor_blood, 
+            d.organ_type, d.contact as donor_contact, d.status as donor_status,
+            p.id as patient_id, p.name as patient_name, p.blood_group as patient_blood, 
+            p.organ_needed, p.urgency_level, p.contact as patient_contact, p.status as patient_status,
+            h.id as hospital_id, h.name as hospital_name, h.location, 
+            h.capacity, h.operating_status
         FROM records r
         LEFT JOIN matches m ON r.match_id = m.id
         LEFT JOIN donors d ON m.donor_id = d.id
         LEFT JOIN patients p ON m.patient_id = p.id
+        LEFT JOIN hospitals h ON m.hospital_id = h.id
         """
         results = self.db.execute_query(query)
         records = []
@@ -22,10 +31,32 @@ class RecordController:
                 'success_status': row[3],
                 'notes': row[4],
                 'follow_up_notes': row[5],
-                'donor_id': row[6],
-                'patient_id': row[7],
-                'donor_name': row[8],
-                'patient_name': row[9]
+                'match_stage': row[6],
+                'match_created': row[7],
+                'donor': {
+                    'id': row[8],
+                    'name': row[9],
+                    'blood_group': row[10],
+                    'organ_type': row[11],
+                    'contact': row[12],
+                    'status': row[13]
+                },
+                'patient': {
+                    'id': row[14],
+                    'name': row[15],
+                    'blood_group': row[16],
+                    'organ_needed': row[17],
+                    'urgency_level': row[18],
+                    'contact': row[19],
+                    'status': row[20]
+                },
+                'hospital': {
+                    'id': row[21],
+                    'name': row[22],
+                    'location': row[23],
+                    'capacity': row[24],
+                    'operating_status': row[25]
+                }
             })
         return {'records': records}
 
