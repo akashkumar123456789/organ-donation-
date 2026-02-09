@@ -84,22 +84,16 @@ class OrganDonationServer(http.server.SimpleHTTPRequestHandler):
                 self.send_error(404)
 
 if __name__ == "__main__":
-    import random
-    PORT = random.randint(8000, 8999)
+    PORT = 8000
     
-    # Try multiple ports if needed
-    for attempt in range(10):
-        try:
-            with socketserver.TCPServer(("", 8000), OrganDonationServer) as httpd:
-                httpd.allow_reuse_address = True
-                print(f"✓ Server running at http://localhost:8000")
-                print("✓ Press Ctrl+C to stop")
-                httpd.serve_forever()
-                break
-        except OSError:
-            PORT += 1
-            if attempt == 9:
-                print("✗ Could not find available port")
-        except KeyboardInterrupt:
-            print("\n✓ Server stopped")
-            break
+    try:
+        with socketserver.TCPServer(("", PORT), OrganDonationServer) as httpd:
+            httpd.allow_reuse_address = True
+            print(f"✓ Server running at http://localhost:{PORT}")
+            print("✓ Press Ctrl+C to stop")
+            httpd.serve_forever()
+    except OSError as e:
+        print(f"✗ Port {PORT} is already in use")
+        print("✗ Stop existing server or use different port")
+    except KeyboardInterrupt:
+        print("\n✓ Server stopped")
