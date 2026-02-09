@@ -25,9 +25,21 @@ class HospitalController:
         return {'success': True, 'id': hospital_id}
 
     def update(self, hospital_id, data):
+        # Get current hospital data
+        query = "SELECT * FROM hospitals WHERE id=?"
+        result = self.db.execute_query(query, (hospital_id,))
+        if not result:
+            return {'success': False, 'error': 'Hospital not found'}
+        
+        current = result[0]
+        # Update only provided fields
+        name = data.get('name', current[1])
+        location = data.get('location', current[2])
+        capacity = data.get('capacity', current[3])
+        operating_status = data.get('operating_status', current[4])
+        
         query = "UPDATE hospitals SET name=?, location=?, capacity=?, operating_status=? WHERE id=?"
-        params = (data['name'], data['location'], data.get('capacity', 10), 
-                 data.get('operating_status', 'Active'), hospital_id)
+        params = (name, location, capacity, operating_status, hospital_id)
         self.db.execute_query(query, params)
         return {'success': True}
 

@@ -1,8 +1,12 @@
-# Organ Donation Management System
+# 🏥 Organ Donation Management System
 
-A complete web application for managing organ donation operations with CRUD functionality across 5 specialized pages.
+A modern, full-stack web application for managing organ donation operations with complete CRUD functionality, real-time matching, and comprehensive medical record tracking.
 
-## Features
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.8+-green.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
+
+## ✨ Features
 
 ### 5-Page Architecture with Full CRUD Operations:
 
@@ -38,12 +42,13 @@ A complete web application for managing organ donation operations with CRUD func
 
 ## Technology Stack
 
-- **Backend**: Python 3.8 with built-in HTTP server
-- **Database**: SQLite for data persistence
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Backend**: Python 3.8+ with HTTP server
+- **Database**: SQLite3 with relational schema
+- **Frontend**: HTML5, CSS3 (with animations), JavaScript ES6+
 - **Architecture**: RESTful API with MVC pattern
+- **Features**: Real-time updates, CSV export, responsive design
 
-## Setup Instructions
+## 🚀 Quick Start
 
 1. **Prerequisites**
    - Python 3.8 or higher

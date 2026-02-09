@@ -26,9 +26,22 @@ class DonorController:
         return {'success': True, 'id': donor_id}
 
     def update(self, donor_id, data):
+        # Get current donor data
+        query = "SELECT * FROM donors WHERE id=?"
+        result = self.db.execute_query(query, (donor_id,))
+        if not result:
+            return {'success': False, 'error': 'Donor not found'}
+        
+        current = result[0]
+        # Update only provided fields
+        name = data.get('name', current[1])
+        blood_group = data.get('blood_group', current[2])
+        organ_type = data.get('organ_type', current[3])
+        contact = data.get('contact', current[4])
+        status = data.get('status', current[5])
+        
         query = "UPDATE donors SET name=?, blood_group=?, organ_type=?, contact=?, status=? WHERE id=?"
-        params = (data['name'], data['blood_group'], data['organ_type'], 
-                 data.get('contact', ''), data.get('status', 'Available'), donor_id)
+        params = (name, blood_group, organ_type, contact, status, donor_id)
         self.db.execute_query(query, params)
         return {'success': True}
 

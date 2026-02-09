@@ -28,10 +28,23 @@ class PatientController:
         return {'success': True, 'id': patient_id}
 
     def update(self, patient_id, data):
+        # Get current patient data
+        query = "SELECT * FROM patients WHERE id=?"
+        result = self.db.execute_query(query, (patient_id,))
+        if not result:
+            return {'success': False, 'error': 'Patient not found'}
+        
+        current = result[0]
+        # Update only provided fields
+        name = data.get('name', current[1])
+        blood_group = data.get('blood_group', current[2])
+        organ_needed = data.get('organ_needed', current[3])
+        urgency_level = data.get('urgency_level', current[4])
+        contact = data.get('contact', current[5])
+        status = data.get('status', current[6])
+        
         query = "UPDATE patients SET name=?, blood_group=?, organ_needed=?, urgency_level=?, contact=?, status=? WHERE id=?"
-        params = (data['name'], data['blood_group'], data['organ_needed'], 
-                 data.get('urgency_level', 5), data.get('contact', ''), 
-                 data.get('status', 'Waiting'), patient_id)
+        params = (name, blood_group, organ_needed, urgency_level, contact, status, patient_id)
         self.db.execute_query(query, params)
         return {'success': True}
 
