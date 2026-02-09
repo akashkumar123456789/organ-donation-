@@ -22,6 +22,98 @@ class ExportController:
         elif table_name == 'all':
             return self._export_all_csv()
         return {'error': 'Invalid table name'}
+    
+    def export_single(self, table_name, record_id):
+        if table_name == 'donor':
+            return self._export_single_donor(record_id)
+        elif table_name == 'patient':
+            return self._export_single_patient(record_id)
+        elif table_name == 'hospital':
+            return self._export_single_hospital(record_id)
+        elif table_name == 'match':
+            return self._export_single_match(record_id)
+        elif table_name == 'record':
+            return self._export_single_record(record_id)
+        return {'error': 'Invalid table name'}
+    
+    def _export_single_donor(self, donor_id):
+        query = "SELECT * FROM donors WHERE id=?"
+        results = self.db.execute_query(query, (donor_id,))
+        if not results:
+            return {'error': 'Donor not found'}
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Name', 'Blood Group', 'Organ Type', 'Contact', 'Status'])
+        writer.writerow(results[0])
+        
+        return {'csv_data': output.getvalue(), 'filename': f'donor_{donor_id}_{datetime.now().strftime("%Y%m%d")}.csv'}
+    
+    def _export_single_patient(self, patient_id):
+        query = "SELECT * FROM patients WHERE id=?"
+        results = self.db.execute_query(query, (patient_id,))
+        if not results:
+            return {'error': 'Patient not found'}
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Name', 'Blood Group', 'Organ Needed', 'Urgency Level', 'Contact', 'Status'])
+        writer.writerow(results[0])
+        
+        return {'csv_data': output.getvalue(), 'filename': f'patient_{patient_id}_{datetime.now().strftime("%Y%m%d")}.csv'}
+    
+    def _export_single_hospital(self, hospital_id):
+        query = "SELECT * FROM hospitals WHERE id=?"
+        results = self.db.execute_query(query, (hospital_id,))
+        if not results:
+            return {'error': 'Hospital not found'}
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Name', 'Location', 'Capacity', 'Operating Status'])
+        writer.writerow(results[0])
+        
+        return {'csv_data': output.getvalue(), 'filename': f'hospital_{hospital_id}_{datetime.now().strftime("%Y%m%d")}.csv'}
+    
+    def _export_single_match(self, match_id):
+        query = """
+        SELECT m.id, d.name, p.name, h.name, m.stage, m.created_at
+        FROM matches m
+        LEFT JOIN donors d ON m.donor_id = d.id
+        LEFT JOIN patients p ON m.patient_id = p.id
+        LEFT JOIN hospitals h ON m.hospital_id = h.id
+        WHERE m.id=?
+        """
+        results = self.db.execute_query(query, (match_id,))
+        if not results:
+            return {'error': 'Match not found'}
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Donor', 'Patient', 'Hospital', 'Stage', 'Created At'])
+        writer.writerow(results[0])
+        
+        return {'csv_data': output.getvalue(), 'filename': f'match_{match_id}_{datetime.now().strftime("%Y%m%d")}.csv'}
+    
+    def _export_single_record(self, record_id):
+        query = """
+        SELECT r.id, d.name, p.name, r.surgery_date, r.success_status, r.notes, r.follow_up_notes
+        FROM records r
+        LEFT JOIN matches m ON r.match_id = m.id
+        LEFT JOIN donors d ON m.donor_id = d.id
+        LEFT JOIN patients p ON m.patient_id = p.id
+        WHERE r.id=?
+        """
+        results = self.db.execute_query(query, (record_id,))
+        if not results:
+            return {'error': 'Record not found'}
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Donor', 'Patient', 'Surgery Date', 'Success Status', 'Notes', 'Follow-up Notes'])
+        writer.writerow(results[0])
+        
+        return {'csv_data': output.getvalue(), 'filename': f'record_{record_id}_{datetime.now().strftime("%Y%m%d")}.csv'}
 
     def _export_donors_csv(self):
         query = "SELECT * FROM donors"

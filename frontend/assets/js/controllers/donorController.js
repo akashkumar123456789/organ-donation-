@@ -46,6 +46,7 @@ class DonorController {
                                 <td><span class="status-badge status-${donor.status.toLowerCase()}">${donor.status}</span></td>
                                 <td>
                                     <button class="btn btn-secondary" onclick="donorController.showEditForm(${donor.id})">Edit</button>
+                                    <button class="btn btn-primary" onclick="donorController.downloadDonor(${donor.id})" title="Download CSV">📥</button>
                                     <button class="btn btn-danger" onclick="donorController.deleteDonor(${donor.id})">Delete</button>
                                 </td>
                             </tr>
@@ -193,6 +194,25 @@ class DonorController {
             } catch (error) {
                 console.error('Failed to delete donor:', error);
             }
+        }
+    }
+
+    async downloadDonor(id) {
+        try {
+            const response = await api.request('GET', `/export/donor/${id}`);
+            if (response.csv_data) {
+                const blob = new Blob([response.csv_data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = response.filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            console.error('Failed to download donor:', error);
         }
     }
 }

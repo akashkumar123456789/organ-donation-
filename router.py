@@ -89,8 +89,16 @@ class Router:
         # Export routes
         elif path.startswith('/api/export'):
             if method == 'GET':
-                table_name = path.split('/')[-1]
-                return self.export_controller.export_csv(table_name)
+                parts = path.split('/')
+                if len(parts) == 4:
+                    # /api/export/donors
+                    table_name = parts[3]
+                    return self.export_controller.export_csv(table_name)
+                elif len(parts) == 5:
+                    # /api/export/donor/1
+                    table_name = parts[3]
+                    record_id = parts[4]
+                    return self.export_controller.export_single(table_name, record_id)
 
         # Dashboard route
         elif path.startswith('/api/dashboard'):
