@@ -172,6 +172,13 @@ class PatientController {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
         
+        // Validate form
+        const errors = FormValidator.validatePatientForm(data);
+        if (errors.length > 0) {
+            FormValidator.showError(errors.join('\n'));
+            return;
+        }
+        
         try {
             await api.createPatient(data);
             app.hideModal();
@@ -185,6 +192,13 @@ class PatientController {
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
+        
+        // Validate form
+        const errors = FormValidator.validatePatientForm(data);
+        if (errors.length > 0) {
+            FormValidator.showError(errors.join('\n'));
+            return;
+        }
         
         try {
             await api.updatePatient(id, data);

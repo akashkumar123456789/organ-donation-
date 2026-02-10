@@ -163,6 +163,13 @@ class DonorController {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
         
+        // Validate form
+        const errors = FormValidator.validateDonorForm(data);
+        if (errors.length > 0) {
+            FormValidator.showError(errors.join('\n'));
+            return;
+        }
+        
         try {
             await api.createDonor(data);
             app.hideModal();
@@ -176,6 +183,13 @@ class DonorController {
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
+        
+        // Validate form
+        const errors = FormValidator.validateDonorForm(data);
+        if (errors.length > 0) {
+            FormValidator.showError(errors.join('\n'));
+            return;
+        }
         
         try {
             await api.updateDonor(id, data);
