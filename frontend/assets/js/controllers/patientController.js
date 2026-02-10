@@ -8,7 +8,10 @@ class PatientController {
         const content = `
             <div class="page-header">
                 <h1>🏥 Patient Waitlist</h1>
-                <button class="btn btn-primary" onclick="patientController.showCreateForm()">➕ Add New Patient</button>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-danger" onclick="enhancedFeatures.exportCurrentPageToPDF()" title="Export to PDF">📄 PDF</button>
+                    <button class="btn btn-primary" onclick="patientController.showCreateForm()">➕ Add New Patient</button>
+                </div>
             </div>
             <div class="stats-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                 <div class="stat-card" style="background: rgba(243, 156, 18, 0.2); padding: 1.5rem; border-radius: 15px; text-align: center; border: 1px solid rgba(243, 156, 18, 0.3);">

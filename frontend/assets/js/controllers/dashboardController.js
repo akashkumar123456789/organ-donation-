@@ -9,6 +9,7 @@ class DashboardController {
             <div class="page-header">
                 <h1>📊 LifeCare Dashboard</h1>
                 <div class="export-buttons">
+                    <button class="btn btn-danger" onclick="enhancedFeatures.exportCurrentPageToPDF()" title="Export to PDF">📄 PDF</button>
                     <button class="btn btn-primary" onclick="dashboardController.exportCSV('all')">📄 Export All</button>
                     <button class="btn btn-secondary" onclick="dashboardController.exportCSV('donors')">🩸 Donors</button>
                     <button class="btn btn-secondary" onclick="dashboardController.exportCSV('patients')">🏥 Patients</button>
